@@ -13,7 +13,7 @@ class Obstacle{
      * Cette méthode permet de réinitialier la position d'un obstacle
      */
     resetPos(){
-        super.x = init_x;
-        super.y = init_y;
+        this.sprite.position.x = this.init_x;
+        this.sprite.position.y = this.init_y;
     }
 }

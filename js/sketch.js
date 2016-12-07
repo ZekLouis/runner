@@ -78,9 +78,11 @@ function setup(){
 	obstacle = createSprite(800, height, 60, 90);
 	obstacle.shapeColor = color(0)
 	obstacle.addToGroup(obstacles)*/
-	obstacles = Group()
-	obstacle = new Obstacle(300, height, 60, 90, 0, 60, 90);
-	obstacle.sprite.addToGroup(obstacles)
+	obstaclesSp = Group()
+	obstacles = [];
+	obstacle = new Obstacle(300, height, 60, 90, 0, 300, height)
+	obstacles.push(obstacle)
+	obstacle.sprite.addToGroup(obstaclesSp)
 	pers.velocity.y = 7
 }
 
@@ -91,25 +93,22 @@ function draw(){
 	drawSprites();
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0){
-		for(var i = 0; i<obstacles.length; i++)
-			obstacles[i].position.x += 5
+		for(var i = 0; i<obstaclesSp.length; i++)
+			obstaclesSp[i].position.x += 5
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width()){
-		for(var i = 0; i<obstacles.length; i++)
-			obstacles[i].position.x -= 5
+		for(var i = 0; i<obstaclesSp.length; i++)
+			obstaclesSp[i].position.x -= 5
 	}
 
 	if ( pers.collide(platform) ) {
 		pers.velocity.y = 0;
 	}
 
-	for(var i = 0; i<obstacles.length; i++){
-		if ( pers.collide(obstacles[i]) ) {
-			pers.visible = false;
-			for(var i = 0; i<obstacles.length; i++){
-				
-			}	
+	for(var i = 0; i<obstaclesSp.length; i++){
+		if ( pers.collide(obstaclesSp[i]) ) {
+			pers.visible = false;	
 		}
 	}
 
@@ -134,5 +133,8 @@ function keyPressed(){
 		pers.position.x = xpos
 		pers.position.y = ypos
 		pers.velocity.y = 7
+		for(var i = 0; i<obstacles.length; i++){
+			obstacles[i].resetPos();
+		}
 	}
 }
