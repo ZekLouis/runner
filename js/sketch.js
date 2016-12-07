@@ -56,7 +56,7 @@ function keyPressed(){
 
 //NEW PROJECT PLAY
 
-var xpos = 200;
+var xpos = 400;
 var ground = 500-(25/2)
 var ypos = 500;
 var GROUND_Y = 450;
@@ -83,19 +83,11 @@ function draw(){
 	drawSprites();
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0){
-		if(pers.position.x < marge_joueur_ecran){
-			obstacle.position.x += 5
-		}else{
-			pers.position.x -= 5;
-		}
+		obstacle.position.x += 5
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width()){
-		if(pers.position.x > $(window).width()-marge_joueur_ecran){
-			obstacle.position.x -= 5
-		}else{
-			pers.position.x += 5;
-		}
+		obstacle.position.x -= 5
 	}
 
 	if ( pers.collide(platform) ) {
