@@ -83,9 +83,15 @@ function draw(){
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0)
     	pers.position.x -= 5;
+		if(pers.position.x < 100){
+			obstacle.position.x += 5
+		}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width())
 		pers.position.x += 5;
+		if(pers.position.x > 400){
+			obstacle.position.x -= 5
+		}
 
 	if ( pers.collide(platform) ) {
 		pers.velocity.y = 0;
