@@ -56,12 +56,13 @@ function keyPressed(){
 
 //NEW PROJECT PLAY
 
-var xpos = 100;
+var xpos = 200;
 var ground = 500-(25/2)
-var ypos = 100;
+var ypos = 500;
 var GROUND_Y = 450;
 var speed = 0.5;
 var jump = 10;
+var marge_joueur_ecran = 400;
 var jumping = false;
 
 function setup(){
@@ -81,17 +82,21 @@ function draw(){
 	text('Arrow, Backspace and R', 25, 50);
 	drawSprites();
 
-	if (keyIsDown(LEFT_ARROW) && xpos > 0)
-    	pers.position.x -= 5;
-		if(pers.position.x < 100){
+	if (keyIsDown(LEFT_ARROW) && xpos > 0){
+		if(pers.position.x < marge_joueur_ecran){
 			obstacle.position.x += 5
+		}else{
+			pers.position.x -= 5;
 		}
+	}
 
-	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width())
-		pers.position.x += 5;
-		if(pers.position.x > 400){
+	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width()){
+		if(pers.position.x > $(window).width()-marge_joueur_ecran){
 			obstacle.position.x -= 5
+		}else{
+			pers.position.x += 5;
 		}
+	}
 
 	if ( pers.collide(platform) ) {
 		pers.velocity.y = 0;
