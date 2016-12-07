@@ -61,7 +61,7 @@ var ground = 500-(25/2)
 var ypos = 500;
 var GROUND_Y = 450;
 var speed = 0.5;
-var jump = 10;
+var jump = 30;
 var marge_joueur_ecran = 400;
 var jumping = false;
 
@@ -80,9 +80,12 @@ function setup(){
 	obstacle.addToGroup(obstacles)*/
 	obstaclesSp = Group()
 	obstacles = [];
-	obstacle = new Obstacle(300, height, 60, 90, 0, 300, height)
-	obstacles.push(obstacle)
-	obstacle.sprite.addToGroup(obstaclesSp)
+	for(var i = 0; i < 10 ; i++){
+		x = Math.random() * (3000 - 600) + 600;
+		obstacle = new Obstacle(x, height, 60, 90, 0, x, height)
+		obstacles.push(obstacle)
+		obstacle.sprite.addToGroup(obstaclesSp)
+	}
 	pers.velocity.y = 7
 }
 
@@ -116,16 +119,12 @@ function draw(){
 		pers.velocity.y = 0;
 		if (jumping) jumping = false;
 	}
+	pers.velocity.y += 2;
 }
 
 function keyPressed(){
-	if (keyCode == 32 && !jumping){
+	if (keyCode == 32 && pers.velocity.y == 2){
 		pers.velocity.y -= jump;
-		jumping = true;
-		setTimeout(function(){
-		    	pers.velocity.y = 7
-		    	jumping = false;
-		}, 200);
 	}
 
 	if (keyCode == 82){
