@@ -21,6 +21,7 @@ function setup(){
 	platform.shapeColor = color(0)
 	platform2 = createSprite(width, GROUND_Y-50, width-500, 50)
 	platform2.shapeColor = color(0)
+	bg = loadImage("assets/background.svg");
 	/*obstacles = Group()
 	obstacle = createSprite(300, height, 60, 90);
 	obstacle.shapeColor = color(0)
@@ -46,6 +47,7 @@ function setup(){
 
 function draw(){
 	background(200);
+	//background(bg);
 	text('Runner 1 min de trajet lol', 25, 25);
 	text('Arrow, Backspace and R', 25, 50);
 	text(score, 25, 75)
@@ -118,3 +120,7 @@ function keyPressed(){
 		platform2.position.y = GROUND_Y-50
 	}
 }
+
+window.onresize = function() {
+  resizeCanvas(windowWidth, windowHeight);
+};
