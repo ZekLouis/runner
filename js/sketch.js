@@ -24,12 +24,33 @@ function setup(){
 	platform.shapeColor = color(0)
 	platform2 = createSprite(width, GROUND_Y-50, width-500, 50)
 	platform2.shapeColor = color(0)
+<<<<<<< HEAD
 
 	//Objet aléatoire
 	x = Math.random() * (3000 - 600) + 600;
 	obstacle = new Obstacle(x, GROUND_Y, 60, 50, 0, x, GROUND_Y)
 	parcours.add(obstacle);
 
+=======
+	bg = loadImage("assets/background.svg");
+	/*obstacles = Group()
+	obstacle = createSprite(300, height, 60, 90);
+	obstacle.shapeColor = color(0)
+	obstacle.addToGroup(obstacles)
+	obstacle = createSprite(800, height, 60, 90);
+	obstacle.shapeColor = color(0)
+	obstacle.addToGroup(obstacles)*/
+
+	//Listes contenants 
+	obstaclesSp = Group()
+	obstacles = [];
+	for(var i = 0; i < 10 ; i++){
+		x = Math.random() * (3000 - 600) + 600;
+		obstacle = new Obstacle(x, GROUND_Y, 60, 50, 0, x, GROUND_Y)
+		obstacles.push(obstacle)
+		obstacle.sprite.addToGroup(obstaclesSp)
+	}
+>>>>>>> a4bd65d014d2b95daf26daaad02abed899979530
 	obstacleRef = new Obstacle(4000, GROUND_Y, 60, 50, 0, x, GROUND_Y)
 	parcours.add(obstacleRef)
 	
@@ -38,6 +59,7 @@ function setup(){
 
 function draw(){
 	background(200);
+	//background(bg);
 	text('Runner 1 min de trajet lol', 25, 25);
 	text('Arrow, Backspace and R', 25, 50);
 	text(score, 25, 75)
@@ -83,3 +105,7 @@ function keyPressed(){
 		platform2.position.y = GROUND_Y-50
 	}
 }
+
+window.onresize = function() {
+  resizeCanvas(windowWidth, windowHeight);
+};
