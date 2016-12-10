@@ -39,10 +39,9 @@ class Parcours{
                 personnage.visible = false;
                 alert('Perdu !');
                 return false;
-            }else{
-                return true;
             }
 	    }
+        return true;
     }
 
     /**

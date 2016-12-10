@@ -18,25 +18,34 @@ function setup(){
 
 	//Initialisation des objets 
 	pers = new Personnage(xpos,GROUND_Y);
-	parcours = new Parcours();
-
-	sol = new Platform(width/2,height,width,50,"floor");
-	platform = new Platform(width, GROUND_Y-50, width-500, 50,"platform");
-
-	//Objet aléatoire
-	x = Math.random() * (3000 - 600) + 600;
-	obstacle = new Obstacle(x, GROUND_Y, 60, 50, 0, x, GROUND_Y)
-	parcours.add(obstacle);
 	
-	obstacleRef = new Obstacle(4000, GROUND_Y, 60, 50, 0, x, GROUND_Y)
-	parcours.add(obstacleRef)
+	sol = new Platform(width/2,height,width,50,"floor");
+	
+	
+	parcoursPlatform = new ParcoursPlatform();
+	platform = new Platform(width, GROUND_Y-50, width-500, 50,"platform");
+	platform2 = new Platform(width+600, GROUND_Y-50, width-500, 50,"platform");
+
+	parcoursPlatform.add(platform);
+	parcoursPlatform.add(platform2)
+
+
+	parcours = new Parcours();
+	obstacle = new Obstacle(width, GROUND_Y, 60, 50, 0, width+500, GROUND_Y)
+	obstacleRef = new Obstacle(4000, GROUND_Y, 60, 50, 0, 4000, GROUND_Y)
+	
+	parcours.add(obstacle);
+	parcours.add(obstacleRef);
+	
+	parcoursPiece = new ParcoursPiece();
+	piece = new Piece(xpos+100,GROUND_Y);
+	parcoursPiece.add(piece);
 	
 	pers.setVelocity(7);
 }
 
 function draw(){
 	background(200);
-	//background(bg);
 	text('Arrow, Backspace and R', 25, 50);
 	text(score, 25, 75)
 	
@@ -44,27 +53,26 @@ function draw(){
 	//console.log(platform2.position.x);
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && pers.getVisible() == true){
-		platform.incrementPosition(5);
-		// for(var i = 0; i<obstaclesSp.length; i++)
-		// 	obstaclesSp[i].position.x += 5
+		parcoursPlatform.move('+',5);
+		parcoursPiece.move('+',5);
 		parcours.move('+',5);
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && pers.getVisible() == true){
-		platform.decrementPosition(5);
+		parcoursPlatform.move('-',5);
+		parcoursPiece.move('-',5);
 		parcours.move('-',5);
 	}
 
-	if ( pers.collision(platform.getSprite()) || pers.collision(sol.getSprite())) {
+	parcoursPlatform.collision(pers.getSprite());
+	score = parcoursPiece.collision(score,pers.getSprite());
+	
+	if (pers.collision(sol.getSprite())) {
 		pers.setVelocity(0);
 	}
 
 	if(game){
 		game = parcours.collision(pers.getSprite())
-	}
-
-	if (pers.collision(sol.getSprite()) ) {
-		pers.setVelocity(0);
 	}
 
 	pers.incrementVelocity(2);
@@ -79,7 +87,8 @@ function keyPressed(){
 		pers.resetPos()
 		score = 0
 		parcours.reset();
-		platform.resetPos();
+		parcoursPlatform.reset();
+		parcoursPiece.reset();
 		game = true;
 	}
 }
