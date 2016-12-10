@@ -10,8 +10,8 @@ var speed = 0.5;
 var jump = 30;
 var marge_joueur_ecran = 400;
 var jumping = false;
-var gagne = false;
 var score = 0;
+var game = true;
 
 function setup(){
 	createCanvas($(window).width(), $(window).height());
@@ -20,10 +20,8 @@ function setup(){
 	pers = new Personnage(xpos,GROUND_Y);
 	parcours = new Parcours();
 
-	platform = createSprite(width/2, height, width, 50)
-	platform.shapeColor = color(0)
-	platform2 = createSprite(width, GROUND_Y-50, width-500, 50)
-	platform2.shapeColor = color(0)
+	sol = new Platform(width/2,height,width,50,"floor");
+	platform = new Platform(width, GROUND_Y-50, width-500, 50,"platform");
 
 	//Objet aléatoire
 	x = Math.random() * (3000 - 600) + 600;
@@ -39,7 +37,6 @@ function setup(){
 function draw(){
 	background(200);
 	//background(bg);
-	text('Runner 1 min de trajet lol', 25, 25);
 	text('Arrow, Backspace and R', 25, 50);
 	text(score, 25, 75)
 	
@@ -47,24 +44,26 @@ function draw(){
 	//console.log(platform2.position.x);
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && pers.getVisible() == true){
-		platform2.position.x += 5
+		platform.incrementPosition(5);
 		// for(var i = 0; i<obstaclesSp.length; i++)
 		// 	obstaclesSp[i].position.x += 5
 		parcours.move('+',5);
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && pers.getVisible() == true){
-		platform2.position.x -= 5
+		platform.decrementPosition(5);
 		parcours.move('-',5);
 	}
 
-	if ( pers.collision(platform) || pers.collision(platform2)) {
+	if ( pers.collision(platform.getSprite()) || pers.collision(sol.getSprite())) {
 		pers.setVelocity(0);
 	}
 
-	parcours.collision(pers.getSprite())
+	if(game){
+		game = parcours.collision(pers.getSprite())
+	}
 
-	if (pers.collision(platform) ) {
+	if (pers.collision(sol.getSprite()) ) {
 		pers.setVelocity(0);
 	}
 
@@ -80,8 +79,8 @@ function keyPressed(){
 		pers.resetPos()
 		score = 0
 		parcours.reset();
-		platform2.position.x = width;
-		platform2.position.y = GROUND_Y-50
+		platform.resetPos();
+		game = true;
 	}
 }
 

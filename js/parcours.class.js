@@ -38,6 +38,9 @@ class Parcours{
             if (personnage.collide(this.obstacles[i].sprite)) {
                 personnage.visible = false;
                 alert('Perdu !');
+                return false;
+            }else{
+                return true;
             }
 	    }
     }
