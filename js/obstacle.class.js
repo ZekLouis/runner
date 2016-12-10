@@ -16,4 +16,12 @@ class Obstacle{
         this.sprite.position.x = this.init_x;
         this.sprite.position.y = this.init_y;
     }
+
+
+    /**
+     * Cette méthode permet de retourner la forme de l'obstacle
+     */
+    getSprite(){
+        return this.sprite;
+    }
 }
