@@ -17,15 +17,7 @@ var game = true;
 var pseudo = "";
 
 function sendScore() {
-	var request = new XMLHttpRequest();
-
-	request.open('POST', 'php/postScore.php', true);
-
-	var formData = new FormData();
-	formData.append('pseudo', pseudo);
-	formData.append('score', score);
-
-	request.send(formData);
+	
 };
 
 function setup(){
