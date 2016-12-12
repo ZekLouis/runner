@@ -33,7 +33,7 @@ function setup(){
 	
 	parcoursPlatform = new ParcoursPlatform();
 	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
-	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"floor");
+	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
 
 	parcoursPlatform.add(platform);
 	parcoursPlatform.add(platform2)
