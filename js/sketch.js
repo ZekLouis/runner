@@ -120,7 +120,7 @@ window.onresize = function() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function sendScore() {
+sendScore = function() {
 	var request = new XMLHttpRequest();
 
 	request.open('POST', 'php/postScore.php', true);
