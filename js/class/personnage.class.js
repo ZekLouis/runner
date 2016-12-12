@@ -18,7 +18,7 @@ class Personnage{
         this.setVelocity(7);
         this.sprite.visible = true;
     }
-
+    
     /**
      * Cette méthode permet de définir la vélocité du personnage
      */

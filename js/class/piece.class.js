@@ -1,3 +1,6 @@
+/**
+ * Cette classe permet d'instancier une piece
+ */
 class Piece{
     constructor(x,y){
         this.sprite = createSprite(x,y,11,11);

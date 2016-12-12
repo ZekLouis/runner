@@ -11,14 +11,14 @@ class ParcoursPlatform{
     }
 
     /**
-     * Cette méthode permet d'ajouter un obstacle au parcours
+     * Cette méthode permet d'ajouter une platform au parcours
      */
     add(platform){
         this.platform.push(platform);
     }
 
     /**
-     * Cette méthode permet de déplacer tous les objets (de faire avancer le personnage)
+     * Cette méthode permet de déplacer toutes les platform (de faire avancer le personnage)
      */
     move(c,int){
         if(c=='+'){
@@ -31,7 +31,7 @@ class ParcoursPlatform{
     }
 
     /**
-     * Cette méthode permet de tester si le personnage est en collision avec un objet du parcours
+     * Cette méthode permet de tester si le personnage est en collision avec une platform du parcours
      */
     collision(personnage){
         for(var i = 0; i<this.platform.length; i++){
@@ -42,7 +42,7 @@ class ParcoursPlatform{
     }
 
     /**
-     * Cette méthode permet de redéfinir la position de tous les objets
+     * Cette méthode permet de redéfinir la position de toutes les platformes
      */
     reset(){
         for(var i = 0; i<this.platform.length; i++){
