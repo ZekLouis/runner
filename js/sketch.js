@@ -93,7 +93,7 @@ function draw(){
 			res = score;
 			alert('Gagné : '+pseudo+'\nScore : '+score+'\nTemps : '+scoreTime);
 			score=0;
-			sendScore(pseudo,scoreTime);
+			sendScore();
 		}
 	}
 
