@@ -1,6 +1,6 @@
 <?php
 
-define('DBHOST', "louisgaume.ddns.net");
+define('DBHOST', "85.69.26.95");
 define('DBNAME', "runner");
 define('DBUSER', "bd");
 define('DBPASSWD', "Pmr6kHGRHCPStH3N");
