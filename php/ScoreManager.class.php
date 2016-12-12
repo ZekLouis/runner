@@ -7,9 +7,10 @@ class ScoreManager{
 	}
 
 	public function addScore($score){
+		
 		$req = $this->db->prepare('INSERT INTO score(pseudo, score) values (:pseudo, :score);');
-		$req->bindValue(':pseudo',$score->getPseudo());
-        $req->bindValue(':score',$score->getScore());
+		$req->bindValue(':pseudo',$score->getPseudo(), PDO::PARAM_STR);
+        $req->bindValue(':score',$score->getScore(), PDO::PARAM_INT);
 		$req->execute();
 	}
 }

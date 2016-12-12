@@ -17,7 +17,9 @@ var game = true;
 var pseudo = "";
 
 function sendScore() {
-	
+	$.getJSON( "php/postScore.php?pseudo="+pseudo+"&score="+scoreTimeB+"&num_requete=1",function(data){
+		console.log(data[1]);
+	});
 };
 
 function setup(){

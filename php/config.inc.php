@@ -1,9 +1,9 @@
 <?php
 
-define('DBHOST', "85.69.26.95");
+define('DBHOST', "192.168.1.40");//85.69.26.95
 define('DBNAME', "runner");
-define('DBUSER', "bd");
-define('DBPASSWD', "Pmr6kHGRHCPStH3N");
+define('DBUSER', "runner");
+define('DBPASSWD', "runner");
 define('ENV','dev');
 
 ?>
