@@ -15,19 +15,35 @@ var jumping = false;
 var score = 0;
 var game = true;
 var pseudo = "";
+var best_score = "";
+var best_name = "";
 
 function sendScore() {
 	$.getJSON( "php/postScore.php?pseudo="+pseudo+"&score="+scoreTimeB+"&num_requete=1",function(data){
 		console.log(data.insertion);
 		if(data.insertion==true){
-			alert('Score enregistré !')
+			text('Score enregistré !',camera.position.x,camera.position.y);
 		}
 	});
 };
 
+function getBest(){
+	$.getJSON( "php/postScore.php?&num_requete=2",function(data){
+		best_score = data.score;
+		best_name = data.nom;
+		best_score = best_score.toString().substring(0, best_score.toString().length-3)+':'+best_score.toString().substring(best_score.toString().length-3,4);
+	});
+};
+
+function updateCamera(){
+	camera.position.x = pers.sprite.position.x*0.1+camera.position.x*0.9
+	camera.position.y = pers.sprite.position.y*0.1+camera.position.y*0.9
+}
+
 function setup(){
 	createCanvas($(window).width(), $(window).height());
-	pseudo = prompt("Pseudo : ","Nobody");
+	pseudo = prompt("Pseudo : ","Someone");
+	getBest();
 	//Initialisation des objets 
 	pers = new Personnage(xpos,GROUND_Y);
 	sol = new Platform(width/2,height,width*3,50,"floor");
@@ -68,45 +84,24 @@ function draw(){
 	scoreTimeB = time-start;
 	scoreTime = scoreTimeB.toString().substring(0, scoreTimeB.toString().length-3)+':'+scoreTimeB.toString().substring(scoreTimeB.toString().length-3,4);
 	background(200);
-	text('Time : '+scoreTime,25,25);
-	text('Arrow, Backspace and R', 25, 50);
-	text(score, 25, 75);
-	text('Take the 3 coins', 25, 100);
+	text('Time : '+scoreTime,width/2,height/2);
+	text('Meilleur Score : '+best_score+' par : '+best_name,width/2,height/2+25);
 	camera.on();
 	
 	drawSprites();
 	//console.log(platform2.position.x);
 
-	parcours.updateVelocity();
-	parcoursPiece.updateVelocity();
-	parcoursPlatform.updateVelocity();
-
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && pers.getVisible() == true){
-		//parcoursPlatform.move('+',5);
-		//parcoursPiece.move('+',5);
-		//parcours.move('+',5);
 		pers.sprite.velocity.x -= 2
 		pers.sprite.velocity.x = Math.max(-10, pers.sprite.velocity.x);
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && pers.getVisible() == true){
-		//parcoursPlatform.move('-',5);
-		//parcoursPiece.move('-',5);
-		//parcours.move('-',5);
 		pers.sprite.velocity.x += 2
         pers.sprite.velocity.x = Math.min(10, pers.sprite.velocity.x);
-		
-		
-        
 	}
 
-	if (keyIsDown(UP_ARROW)){
-		camera.position.y ++
-	}
-
-	camera.position.x = pers.sprite.position.x*0.1+camera.position.x*0.9
-
-	camera.position.y = (pers.sprite.position.y*0.1+camera.position.y*0.9)
+	updateCamera();
 
 	parcoursPlatform.collision(pers.getSprite());
 	score = parcoursPiece.collision(score,pers.getSprite());
@@ -119,7 +114,7 @@ function draw(){
 		game = parcours.collision(pers.getSprite())
 		if(score>=30){
 			res = score;
-			alert('Gagné : '+pseudo+'\nScore : '+score+'\nTemps : '+scoreTime);
+			alert('Gagné : '+pseudo+'\nTemps : '+scoreTime);
 			score=0;
 			sendScore();
 		}
@@ -142,9 +137,6 @@ function keyPressed(){
 		parcoursPiece.reset();
 		game = true;
 		start = new Date();
+		getBest();
 	}
-}
-
-window.onresize = function() {
-  resizeCanvas(windowWidth, windowHeight);
 }

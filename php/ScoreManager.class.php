@@ -14,5 +14,13 @@ class ScoreManager{
 		$req->execute();
 		return $req->rowCount();
 	}
+
+	public function getBest(){
+		$sql = "SELECT * FROM score order by score limit 1";
+		$req = $this->db->query($sql);
+		$res = $req->fetch(PDO::FETCH_OBJ);
+		$score = new Score($res);
+		return $score;
+	}
 }
 ?>
