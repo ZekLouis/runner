@@ -30,9 +30,7 @@ function setup(){
 	pseudo = prompt("Pseudo : ","Nobody");
 	//Initialisation des objets 
 	pers = new Personnage(xpos,GROUND_Y);
-	camera = new Camera(1000,1000);
-	camera.on();
-	sol = new Platform(width/2,height,width,50,"floor");
+	sol = new Platform(width/2,height,width*3,50,"floor");
 	
 	
 	parcoursPlatform = new ParcoursPlatform();
@@ -74,6 +72,7 @@ function draw(){
 	text('Arrow, Backspace and R', 25, 50);
 	text(score, 25, 75);
 	text('Take the 3 coins', 25, 100);
+	camera.on();
 	
 	drawSprites();
 	//console.log(platform2.position.x);
@@ -83,16 +82,27 @@ function draw(){
 	parcoursPlatform.updateVelocity();
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && pers.getVisible() == true){
-		parcoursPlatform.move('+',5);
-		parcoursPiece.move('+',5);
-		parcours.move('+',5);
+		//parcoursPlatform.move('+',5);
+		//parcoursPiece.move('+',5);
+		//parcours.move('+',5);
+		pers.sprite.velocity.x -= 2
+		pers.sprite.velocity.x = Math.max(-10, pers.sprite.velocity.x);
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && pers.getVisible() == true){
-		parcoursPlatform.move('-',5);
-		parcoursPiece.move('-',5);
-		parcours.move('-',5);
+		//parcoursPlatform.move('-',5);
+		//parcoursPiece.move('-',5);
+		//parcours.move('-',5);
+		pers.sprite.velocity.x += 2
+        pers.sprite.velocity.x = Math.min(10, pers.sprite.velocity.x);
+		
+		
+        
 	}
+
+	camera.position.x = pers.sprite.position.x*0.1+camera.position.x*0.9
+
+	camera.position.y = pers.sprite.position.y*0.1+camera.position.y*0.9
 
 	parcoursPlatform.collision(pers.getSprite());
 	score = parcoursPiece.collision(score,pers.getSprite());
@@ -112,6 +122,7 @@ function draw(){
 	}
 
 	pers.incrementVelocity(2);
+	pers.sprite.velocity.x *= 0.95
 }
 
 function keyPressed(){
