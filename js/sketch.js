@@ -100,9 +100,13 @@ function draw(){
         
 	}
 
+	if (keyIsDown(UP_ARROW)){
+		camera.position.y ++
+	}
+
 	camera.position.x = pers.sprite.position.x*0.1+camera.position.x*0.9
 
-	camera.position.y = pers.sprite.position.y*0.1+camera.position.y*0.9
+	camera.position.y = (pers.sprite.position.y*0.1+camera.position.y*0.9)
 
 	parcoursPlatform.collision(pers.getSprite());
 	score = parcoursPiece.collision(score,pers.getSprite());
