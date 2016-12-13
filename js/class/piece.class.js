@@ -3,7 +3,7 @@
  */
 class Piece{
     constructor(x,y){
-        this.sprite = createSprite(x,y,11,11);
+        this.sprite = createSprite(x,y,25,25);
         this.sprite.shapeColor= color(204,204,0);
         this.init_x = x;
         this.init_y = y;

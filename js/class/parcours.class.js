@@ -22,11 +22,16 @@ class Parcours{
      */
     move(c,int){
         if(c=='+'){
-            for(var i = 0; i<this.obstacles.length; i++)
-		        this.obstacles[i].sprite.velocity.x += 2
+            for(var i = 0; i<this.obstacles.length; i++){
+                this.obstacles[i].sprite.velocity.x += 2
+                this.obstacles[i].sprite.velocity.x = Math.min(10, this.obstacles[i].sprite.velocity.x);
+            }
         }else{
-            for(var i = 0; i<this.obstacles.length; i++)
-		        this.obstacles[i].sprite.velocity.x -= 2
+            for(var i = 0; i<this.obstacles.length; i++){
+                this.obstacles[i].sprite.velocity.x -= 2
+                this.obstacles[i].sprite.velocity.x = Math.max(-10, this.obstacles[i].sprite.velocity.x);
+            }
+		        
         }
     }
 

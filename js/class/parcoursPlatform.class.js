@@ -22,11 +22,15 @@ class ParcoursPlatform{
      */
     move(c,int){
         if(c=='+'){
-            for(var i = 0; i<this.platform.length; i++)
-		        this.platform[i].sprite.velocity.x += 2
+            for(var i = 0; i<this.platform.length; i++){
+                this.platform[i].sprite.velocity.x += 2
+                this.platform[i].sprite.velocity.x = Math.min(10, this.platform[i].sprite.velocity.x);
+            }
         }else{
-            for(var i = 0; i<this.platform.length; i++)
-		        this.platform[i].sprite.velocity.x -= 2
+            for(var i = 0; i<this.platform.length; i++){
+                this.platform[i].sprite.velocity.x -= 2
+                this.platform[i].sprite.velocity.x = Math.max(-10, this.platform[i].sprite.velocity.x);
+            }		        
         }
     }
 

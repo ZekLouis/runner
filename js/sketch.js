@@ -18,7 +18,10 @@ var pseudo = "";
 
 function sendScore() {
 	$.getJSON( "php/postScore.php?pseudo="+pseudo+"&score="+scoreTimeB+"&num_requete=1",function(data){
-		console.log(data[1]);
+		console.log(data.insertion);
+		if(data.insertion==true){
+			alert('Score enregistré !')
+		}
 	});
 };
 
@@ -27,13 +30,14 @@ function setup(){
 	pseudo = prompt("Pseudo : ","Nobody");
 	//Initialisation des objets 
 	pers = new Personnage(xpos,GROUND_Y);
-	
+	camera = new Camera(1000,1000);
+	camera.on();
 	sol = new Platform(width/2,height,width,50,"floor");
 	
 	
 	parcoursPlatform = new ParcoursPlatform();
 	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
-	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"floor");
+	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
 
 	parcoursPlatform.add(platform);
 	parcoursPlatform.add(platform2)

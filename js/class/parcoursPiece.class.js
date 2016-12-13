@@ -22,13 +22,15 @@ class ParcoursPiece{
      */
     move(c,int){
         if(c=='+'){
-            for(var i = 0; i<this.pieces.length; i++)
-		        this.pieces[i].sprite.velocity.x += 2
-                //this.pieces[i].sprite.velocity.x = Math.max(-100, this.pieces[i].sprite.velocity.x);
+            for(var i = 0; i<this.pieces.length; i++){
+                this.pieces[i].sprite.velocity.x += 2
+                this.pieces[i].sprite.velocity.x = Math.min(10, this.pieces[i].sprite.velocity.x);
+            }   
         }else{
-            for(var i = 0; i<this.pieces.length; i++)
-		        this.pieces[i].sprite.velocity.x -= 2
-                //this.pieces[i].sprite.velocity.x = Math.max(-100, this.pieces[i].sprite.velocity.x);
+            for(var i = 0; i<this.pieces.length; i++){
+                this.pieces[i].sprite.velocity.x -= 2
+                this.pieces[i].sprite.velocity.x = Math.max(-10, this.pieces[i].sprite.velocity.x);
+            }
         }
 
         // this.velocity = Math.max(-100, this.velocity);

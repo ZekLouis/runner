@@ -11,9 +11,8 @@ if(isset($_GET['pseudo']) && isset($_GET['score'])){
     $scoreManager = new ScoreManager($db);
     
     $score = new Score($_GET);
-    $scoreManager->addScore($score);
-
-    $db = null;
-    echo json_encode(array("1"=>"chien","3"=>"bite"));
+    $res = $scoreManager->addScore($score);
+    
+    echo json_encode(array("insertion"=>$res==1));
 }
 ?>

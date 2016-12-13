@@ -12,6 +12,7 @@ class ScoreManager{
 		$req->bindValue(':pseudo',$score->getPseudo(), PDO::PARAM_STR);
         $req->bindValue(':score',$score->getScore(), PDO::PARAM_INT);
 		$req->execute();
+		return $req->rowCount();
 	}
 }
 ?>
