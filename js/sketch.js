@@ -33,7 +33,7 @@ function setup(){
 	
 	parcoursPlatform = new ParcoursPlatform();
 	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
-	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
+	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"floor");
 
 	parcoursPlatform.add(platform);
 	parcoursPlatform.add(platform2)
@@ -73,6 +73,10 @@ function draw(){
 	
 	drawSprites();
 	//console.log(platform2.position.x);
+
+	parcours.updateVelocity();
+	parcoursPiece.updateVelocity();
+	parcoursPlatform.updateVelocity();
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && pers.getVisible() == true){
 		parcoursPlatform.move('+',5);

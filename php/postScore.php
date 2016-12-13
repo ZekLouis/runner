@@ -8,7 +8,6 @@ if(isset($_GET['pseudo']) && isset($_GET['score'])){
     //phpinfo();
             
     $db = new Mypdo();
-    print_r($db);
     $scoreManager = new ScoreManager($db);
     
     $score = new Score($_GET);
