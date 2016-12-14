@@ -44,7 +44,7 @@ function setup(){
 	createCanvas($(window).width(), $(window).height());
 	pseudo = prompt("Pseudo : ","Someone");
 	getBest();
-	//Initialisation des objets 
+
 	pers = new Personnage(xpos,GROUND_Y);
 	sol = new Platform(width/2,height,width*3,50,"floor");
 	
