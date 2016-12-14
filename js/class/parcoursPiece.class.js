@@ -49,6 +49,7 @@ class ParcoursPiece{
         for(var i = 0; i<this.pieces.length; i++){
             if (personnage.collide(this.pieces[i].sprite)) {
                 this.pieces[i].sprite.position.y = -30;
+                derniere_col = new Date();
                 return score+10;
             }
 	    }

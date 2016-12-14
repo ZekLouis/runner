@@ -17,12 +17,13 @@ var game = true;
 var pseudo = "";
 var best_score = "";
 var best_name = "";
+var temps = 0;
+var derniere_col = 0;
 
 function sendScore() {
 	$.getJSON( "php/postScore.php?pseudo="+pseudo+"&score="+scoreTimeB+"&num_requete=1",function(data){
-		console.log(data.insertion);
 		if(data.insertion==true){
-			text('Score enregistré !',camera.position.x,camera.position.y);
+			temps = 1000000000;
 		}
 	});
 };
@@ -70,7 +71,18 @@ function setup(){
 	piece = new Piece(xpos+100,GROUND_Y);
 	piece2 = new Piece(2*widthPlatform+espacePlatform,GROUND_Y-100);
 	piece3 = new Piece(2*widthPlatform+espacePlatform,GROUND_Y);
-	
+	piece3 = new Piece(xpos+120,GROUND_Y);
+	parcoursPiece.add(piece3);
+	piece3 = new Piece(xpos+160,GROUND_Y);
+	parcoursPiece.add(piece3);
+	piece3 = new Piece(xpos+200,GROUND_Y);
+	parcoursPiece.add(piece3);
+	piece3 = new Piece(xpos+240,GROUND_Y);
+	parcoursPiece.add(piece3);
+	piece3 = new Piece(xpos+300,GROUND_Y);
+	parcoursPiece.add(piece3);
+	piece3 = new Piece(xpos+340,GROUND_Y);
+	parcoursPiece.add(piece3);
 	parcoursPiece.add(piece);
 	parcoursPiece.add(piece2);
 	parcoursPiece.add(piece3);
@@ -86,6 +98,12 @@ function draw(){
 	background(200);
 	text('Time : '+scoreTime,width/2,height/2);
 	text('Meilleur Score : '+best_score+' par : '+best_name,width/2,height/2+25);
+
+	if(temps>0){
+		text('Score enregistré !',width/2,height/2+50);
+		temps--;
+	}
+	
 	camera.on();
 	
 	drawSprites();
@@ -112,13 +130,16 @@ function draw(){
 
 	if(game){
 		game = parcours.collision(pers.getSprite())
-		if(score>=30){
+		if(score>=1000){
 			res = score;
 			alert('Gagné : '+pseudo+'\nTemps : '+scoreTime);
 			score=0;
 			sendScore();
 		}
 	}
+
+	var deltaTemps = (new Date()-derniere_col)/25;
+	camera.zoom=1+normale(deltaTemps-3,1,0)
 
 	pers.incrementVelocity(2);
 	pers.sprite.velocity.x *= 0.95
@@ -132,6 +153,7 @@ function keyPressed(){
 	if (keyCode == 82){
 		pers.resetPos()
 		score = 0
+		temps = 0
 		parcours.reset();
 		parcoursPlatform.reset();
 		parcoursPiece.reset();
@@ -139,4 +161,8 @@ function keyPressed(){
 		start = new Date();
 		getBest();
 	}
+}
+
+function normale(x,variance,mu){
+	return (1/(variance*Math.sqrt(2*Math.PI))*Math.exp(-((x-mu)*(x-mu))/(2*variance*variance)))
 }
