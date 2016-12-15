@@ -2,6 +2,10 @@
 
 //NEW PROJECT PLAY
 
+var socket = io('http://louisgaume.ddns.net:8000');
+socket.on('user connected', function(data){console.log("Un autre joueur s'est connecté")})
+socket.on('chat', function(data){console.log(data)})
+
 var xpos = 400;
 var ground = 500-(25/2)
 var ypos = 500;
@@ -92,6 +96,7 @@ function setup(){
 }
 
 function draw(){
+	
 	time = new Date();
 	scoreTimeB = time-start;
 	scoreTime = scoreTimeB.toString().substring(0, scoreTimeB.toString().length-3)+':'+scoreTimeB.toString().substring(scoreTimeB.toString().length-3,4);
