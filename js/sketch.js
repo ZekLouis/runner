@@ -3,8 +3,9 @@
 //NEW PROJECT PLAY
 
 var socket = io('http://louisgaume.ddns.net:8000');
-socket.on('user connected', function(data){console.log("Un autre joueur s'est connecté")})
-socket.on('chat', function(data){console.log(data)})
+socket.on('new_player', function(data){console.log(data," s'est connecté.")});
+socket.on('chat', function(data){console.log(data)});
+socket.on('update_position', function(data){console.log(data)});
 
 var xpos = 400;
 var ground = 500-(25/2)
@@ -48,6 +49,7 @@ function updateCamera(){
 function setup(){
 	createCanvas($(window).width(), $(window).height());
 	pseudo = prompt("Pseudo : ","Someone");
+	socket.emit('pseudo',pseudo);
 	getBest();
 
 	pers = new Personnage(xpos,GROUND_Y);
@@ -75,18 +77,7 @@ function setup(){
 	piece = new Piece(xpos+100,GROUND_Y);
 	piece2 = new Piece(2*widthPlatform+espacePlatform,GROUND_Y-100);
 	piece3 = new Piece(2*widthPlatform+espacePlatform,GROUND_Y);
-	piece3 = new Piece(xpos+120,GROUND_Y);
-	parcoursPiece.add(piece3);
-	piece3 = new Piece(xpos+160,GROUND_Y);
-	parcoursPiece.add(piece3);
-	piece3 = new Piece(xpos+200,GROUND_Y);
-	parcoursPiece.add(piece3);
-	piece3 = new Piece(xpos+240,GROUND_Y);
-	parcoursPiece.add(piece3);
-	piece3 = new Piece(xpos+300,GROUND_Y);
-	parcoursPiece.add(piece3);
-	piece3 = new Piece(xpos+340,GROUND_Y);
-	parcoursPiece.add(piece3);
+	
 	parcoursPiece.add(piece);
 	parcoursPiece.add(piece2);
 	parcoursPiece.add(piece3);
