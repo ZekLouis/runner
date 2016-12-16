@@ -3,9 +3,12 @@
 //NEW PROJECT PLAY
 
 var socket = io('http://louisgaume.ddns.net:8000');
-socket.on('new_player', function(data){console.log(data," s'est connecté.")});
+socket.on('new_player', function(data){console.log(data.pseudo,"s'est connecté.",data.nb,"joueur(s) en ligne")});
+socket.on('del_player', function(data){console.log(data,"s'est deconnecté.")});
 socket.on('chat', function(data){console.log(data)});
 socket.on('update_position', function(data){console.log(data)});
+socket.on('connect_error',function(err){console.log('Erreur de connexion')})
+socket.on('arrivee',function(data){console.log(data,"joueur(s) en ligne.")})
 
 var xpos = 400;
 var ground = 500-(25/2)
