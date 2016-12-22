@@ -1,5 +1,5 @@
 /**
- * Cette classe permet d'instancier un parcours contenant des obstacles
+ * Cette classe permet d'instancier un parcours contenant des objets
  */
 class Parcours{
 
@@ -7,45 +7,22 @@ class Parcours{
      * Constructeur de la classe Parcours
      */
     constructor(){
-        this.obstacles = [];
+        this.objets = [];
     }
 
     /**
-     * Cette méthode permet d'ajouter un obstacle au parcours
+     * Cette méthode permet d'ajouter un objet au parcours
      */
-    add(obstacle){
-        this.obstacles.push(obstacle);
-    }
-
-    /**
-     * Cette méthode permet de déplacer tous les objets (de faire avancer le personnage)
-     */
-    move(c,int){
-        if(c=='+'){
-            for(var i = 0; i<this.obstacles.length; i++){
-                this.obstacles[i].sprite.velocity.x += 2
-                this.obstacles[i].sprite.velocity.x = Math.min(10, this.obstacles[i].sprite.velocity.x);
-            }
-        }else{
-            for(var i = 0; i<this.obstacles.length; i++){
-                this.obstacles[i].sprite.velocity.x -= 2
-                this.obstacles[i].sprite.velocity.x = Math.max(-10, this.obstacles[i].sprite.velocity.x);
-            }
-		        
-        }
-    }
-
-    updateVelocity(){
-        for(var i = 0; i<this.obstacles.length; i++)
-		    this.obstacles[i].sprite.velocity.x *= 0.95
+    add(objet){
+        this.objets.push(objet);
     }
 
     /**
      * Cette méthode permet de tester si le personnage est en collision avec un objet du parcours
      */
     collision(personnage){
-        for(var i = 0; i<this.obstacles.length; i++){
-            if (personnage.collide(this.obstacles[i].sprite)) {
+        for(var i = 0; i<this.objets.length; i++){
+            if (personnage.collide(this.objets[i].sprite) && this.objets[i] instanceof Objet) {
                 personnage.visible = false;
                 alert('Perdu !');
                 return false;
@@ -58,8 +35,8 @@ class Parcours{
      * Cette méthode permet de redéfinir la position de tous les objets
      */
     reset(){
-        for(var i = 0; i<this.obstacles.length; i++){
-			this.obstacles[i].resetPos();
+        for(var i = 0; i<this.objets.length; i++){
+			this.objets[i].resetPos();
 		}
     }
 }

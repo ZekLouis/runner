@@ -1,12 +1,20 @@
 /**
- * Classe permettant de créer un objet obstacle
+ * Cette classe permet d'instancier un objet
  */
-class Obstacle{
-    constructor(x,y,width,height,couleur){
+class Objet{
+
+    /**
+     * Constructeur de la classe Objet
+     */
+    constructor(x,y,width,height,couleur,type){
         this.sprite = createSprite(x,y,width,height);
-        this.sprite.shapeColor = color(couleur);
+        this.sprite.shapeColor = couleur;
         this.init_x = x;
         this.init_y = y;
+        this.type = type;
+        if(type=="shoot"){
+            this.moveShoot();
+        }
     }
 
     /**
@@ -17,11 +25,14 @@ class Obstacle{
         this.sprite.position.y = this.init_y;
     }
 
-
     /**
      * Cette méthode permet de retourner la forme de l'obstacle
      */
     getSprite(){
         return this.sprite;
+    }
+    
+    moveShoot(){
+        this.sprite.velocity.x = 50;
     }
 }
