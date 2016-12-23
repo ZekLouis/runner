@@ -1,7 +1,7 @@
 //TODO
 
 //NEW PROJECT PLAY
-var GROUND_Y = ($(window).height()-50);
+var GROUND_Y = 800;
 var xpos = 400;
 var n_joueur = null;
 var socket = io('http://localhost:8080');
@@ -49,7 +49,7 @@ socket.on('joueurs',function(data){
 
 socket.on('nb_joueurs',function(data){console.log(data+' joueur(s) en ligne.')})
 
-var widthPlatform = ($(window).height()-50);
+var widthPlatform = 1080;
 var id=1;
 var espacePlatform = 130;
 var speed = 2;
@@ -78,27 +78,39 @@ function getBest(){
 };
 
 function updateCamera(){
-	camera.position.x = joueur.sprite.position.x*0.1+camera.position.x*0.9
-	camera.position.y = joueur.sprite.position.y*0.1+camera.position.y*0.9
-}
+	camera.position.x = joueur.sprite.position.x*0.1+camera.position.x*0.9;
+	camera.position.y = joueur.sprite.position.y*0.1+camera.position.y*0.9;
+};
 
 function setup(){
 	createCanvas($(window).width(), $(window).height());
 	pseudo = prompt("Pseudo : ","Someone");
 	//TODO GET ID via serveur puis emit pour pseudo position etc..
 	setInterval(function(){
-		socket.emit('maPosition',{id: mon_id, x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
-	}, 100);
+		socket.emit('maPosition',{
+			id: mon_id, 
+			x: joueur.sprite.position.x, 
+			y: joueur.sprite.position.y, 
+			vx: joueur.sprite.velocity.x, 
+			vy: joueur.sprite.velocity.y
+		});
+	}, 1000/30);
 	getBest();
 
 	joueur = new Joueur(mon_id,xpos,GROUND_Y,pseudo);
-	socket.emit('new_player',{pseudo: pseudo,x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
-	sol = new Platform(width/2,height,width*3,50,"floor");
+	socket.emit('new_player',{
+		pseudo: pseudo,
+		x: joueur.sprite.position.x, 
+		y: joueur.sprite.position.y, 
+		vx: joueur.sprite.velocity.x, 
+		vy: joueur.sprite.velocity.y
+	});
+	sol = new Platform(1080,900,1080*3,50,"floor");
 	
 	
 	parcoursPlatform = new ParcoursPlatform();
-	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
-	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
+	platform = new Platform(900, GROUND_Y-50, widthPlatform, 50,"platform");
+	platform2 = new Platform(900+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
 
 	parcoursPlatform.add(platform);
 	parcoursPlatform.add(platform2)

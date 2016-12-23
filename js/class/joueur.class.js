@@ -6,6 +6,7 @@ class Joueur{
         this.id = id;
         this.sprite = createSprite(x,y);
         this.sprite.addImage(loadImage("assets/Chartest1.png"));
+        //this.sprite.addAnimation("normal", "assets/Chartest1.png", "assets/Chartest2.png");
         this.sprite.shapeColor = color(0,102,104);
         this.init_x = x;
         this.init_y = y;
