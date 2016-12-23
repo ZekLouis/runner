@@ -7,14 +7,21 @@ class Objet{
      * Constructeur de la classe Objet
      */
     constructor(x,y,width,height,couleur,type){
-        this.sprite = createSprite(x,y,width,height);
+        if(type=="shoot"){
+            this.sprite = createSprite(x,y);
+            this.sprite.addImage(loadImage("assets/bullet.png"));
+            this.moveShoot();
+        }else if(type=="explode"){
+            this.sprite = createSprite(x,y);
+            this.sprite.addImage(loadImage("assets/explode.png"));
+        }else{
+             this.sprite = createSprite(x,y,width,height);
+        }
         this.sprite.shapeColor = couleur;
         this.init_x = x;
         this.init_y = y;
         this.type = type;
-        if(type=="shoot"){
-            this.moveShoot();
-        }
+       
     }
 
     /**

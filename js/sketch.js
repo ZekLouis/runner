@@ -9,11 +9,17 @@ others_players = [];
 var busy = false;
 var mon_id = "";
 
+
+
 /*socket.on('new_player', function(data){
 	console.log(data.pseudo+" s'est connecté.");
 	n_joueur = new Joueur(xpos,GROUND_Y);
 });*/
-socket.on('del_player', function(data){console.log(data+" s'est deconnecté.")});
+socket.on('del_player', function(data){
+	console.log(data+" s'est deconnecté.");
+	others_players[data].sprite.remove();
+	delete(others_players[data]);
+});
 
 socket.on('id',function(data){
 	mon_id = data;
@@ -25,6 +31,10 @@ socket.on('joueurs',function(data){
 		if(data.hasOwnProperty(key)){
 			if(mon_id!=key){
 				console.log(key,"->",data[key]);
+				if(!others_players.hasOwnProperty(key)){
+					others_players[key]=new Joueur(key,data[key].x, data[key].y, data[key].pseudo);
+				}
+				others_players[key].setPos(data[key].x, data[key].y, data[key].vx, data[key].vy);
 			}
 		}
 	}
@@ -76,10 +86,13 @@ function setup(){
 	createCanvas($(window).width(), $(window).height());
 	pseudo = prompt("Pseudo : ","Someone");
 	//TODO GET ID via serveur puis emit pour pseudo position etc..
+	setInterval(function(){
+		socket.emit('maPosition',{id: mon_id, x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
+	}, 100);
 	getBest();
 
 	joueur = new Joueur(mon_id,xpos,GROUND_Y,pseudo);
-	socket.emit('new_player',{pseudo: pseudo,x: joueur.sprite.position.x, y: joueur.sprite.position.y});
+	socket.emit('new_player',{pseudo: pseudo,x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
 	sol = new Platform(width/2,height,width*3,50,"floor");
 	
 	
@@ -119,7 +132,7 @@ function draw(){
 	scoreTimeB = time-start;
 	scoreTime = scoreTimeB.toString().substring(0, scoreTimeB.toString().length-3)+':'+scoreTimeB.toString().substring(scoreTimeB.toString().length-3,4);
 	background(200);
-	text(pseudo,joueur.getX()-joueur.getWidth()/2,joueur.getY()-20);
+	text(pseudo,joueur.getX()-joueur.getWidth()/2,joueur.getY()-30);
 	if(best_score==""){
 		text('Chargement du meilleur score ...',width/2,height/2+25);
 	}else{
@@ -133,7 +146,6 @@ function draw(){
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && joueur.getVisible() == true){
 		joueur.move('-',speed);
-		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
 	}
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && joueur.getVisible() == true){
@@ -153,6 +165,17 @@ function draw(){
 	
 	if (joueur.collision(sol.getSprite())) {
 		joueur.setVelocity(0);
+	}
+
+	for(var key in others_players){
+		if(others_players.hasOwnProperty(key)){
+			if(mon_id!=key){
+				if(others_players[key].collision(sol.getSprite())){
+					others_players[key].setVelocity(0);
+					parcoursPlatform.collision(others_players[key].getSprite());
+				}
+			}
+		}
 	}
 
 	if(game){

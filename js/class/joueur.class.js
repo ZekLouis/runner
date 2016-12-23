@@ -4,16 +4,22 @@
 class Joueur{
     constructor(id,x,y,pseudo){
         this.id = id;
-        this.sprite = createSprite(x,y,25,25);
+        this.sprite = createSprite(x,y);
+        this.sprite.addImage(loadImage("assets/Chartest1.png"));
         this.sprite.shapeColor = color(0,102,104);
         this.init_x = x;
         this.init_y = y;
         this.pseudo = pseudo;
     }
 
-    setPos(x,y){
+    /**
+     * Cette méthode permet de définir la position ainsi que la vélocité d'un joueur
+     */
+    setPos(x,y,vx,vy){
         this.sprite.position.x = x;
         this.sprite.position.y = y;
+        this.sprite.velocity.x = vx;
+        this.sprite.velocity.y = vy;
     }
 
     /**
@@ -113,6 +119,9 @@ class Joueur{
      */
     shoot(){
         var obj = new Objet(joueur.getX()+joueur.getWidth()/2,joueur.getY(),10,10,color(0),"shoot");
+        var expl = new Objet(joueur.getX()+joueur.getWidth(),joueur.getY(),10,10,color(0),"explode");
+        setTimeout(function(){ expl.getSprite().remove()}, 50);
+        derniere_col = new Date();
         this.move('-',speed);
     }
 
