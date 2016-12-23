@@ -1,4 +1,6 @@
 //TODO
+// Saccade multi
+// Pseudo sur chaque joueur
 
 //NEW PROJECT PLAY
 var GROUND_Y = 800;
