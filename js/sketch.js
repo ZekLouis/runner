@@ -1,16 +1,14 @@
 //TODO
-// Saccade multi
-// Pseudo sur chaque joueur
 
 //NEW PROJECT PLAY
-var GROUND_Y = 800;
+var GROUND_Y = 800;//($(window).height()-50);
 var xpos = 400;
 var n_joueur = null;
 var socket = io('http://localhost:8080');
-others_players = [];
+var players = [];
 var busy = false;
 var mon_id = "";
-
+var lastUpdatePositionsTimestamp = new Date().getTime();
 
 
 /*socket.on('new_player', function(data){
@@ -19,8 +17,8 @@ var mon_id = "";
 });*/
 socket.on('del_player', function(data){
 	console.log(data+" s'est deconnecté.");
-	others_players[data].sprite.remove();
-	delete(others_players[data]);
+	players[data].sprite.remove();
+	delete(players[data]);
 });
 
 socket.on('id',function(data){
@@ -29,14 +27,54 @@ socket.on('id',function(data){
 });
 
 socket.on('joueurs',function(data){
-	for(var key in data){
-		if(data.hasOwnProperty(key)){
+	if (data.timestamp > lastUpdatePositionsTimestamp){
+		lastUpdatePositionsTimestamp = data.timestamp;
+		for(var key in data.joueurs){
 			if(mon_id!=key){
-				console.log(key,"->",data[key]);
-				if(!others_players.hasOwnProperty(key)){
-					others_players[key]=new Joueur(key,data[key].x, data[key].y, data[key].pseudo);
+				if(!players.hasOwnProperty(key)){
+					players[key]=new Joueur(key,data.joueurs[key].x, data.joueurs[key].y, data.joueurs[key].pseudo);
 				}
-				others_players[key].setPos(data[key].x, data[key].y, data[key].vx, data[key].vy);
+
+				// Pour enlever les glitchs, on va adoucir la transition.
+				// Il y a glitch lorsque ce que génère ton ordinateur ne concorde pas 
+				// avec ce que le serveur te dit (téléportations).
+
+				// On adoucit en fonction de la distance entre ce que 
+				// tu as calculé et ce qu'on te dit. 
+
+				var deltaVelocity = Math.sqrt(
+					Math.pow(data.joueurs[key].vx-players[key].sprite.velocity.x,2)+
+					Math.pow(data.joueurs[key].vy-players[key].sprite.velocity.y,2)
+				);
+
+				var deltaPosition = Math.sqrt(
+					Math.pow(data.joueurs[key].x-players[key].sprite.position.x,2)+
+					Math.pow(data.joueurs[key].y-players[key].sprite.position.y,2)
+				);
+
+				//console.log(deltaPosition, deltaVelocity);
+
+				// Si la différence est grande, on transite sec pour resynchroniser.
+				// Si la différence est minim, on laisse l'ordinateur dans le "faux"
+				// pour un résultat plus fluide.
+
+				// Lorsqu'on fait varirer la constante : plus elle est petite, 
+				// plus la transition est sèche.
+
+				var positionSmoothness = 1 - deltaVelocity/(deltaVelocity + 10);
+				var velocitySmoothness = 1 - deltaPosition/(deltaPosition + 10);
+
+				//console.log(positionSmoothness+" "+velocitySmoothness);
+
+				players[key].setPos(
+					data.joueurs[key].x * (1-positionSmoothness) + players[key].sprite.position.x * positionSmoothness,
+					data.joueurs[key].y * (1-positionSmoothness) + players[key].sprite.position.y * positionSmoothness,
+					data.joueurs[key].vx * (1-velocitySmoothness) + players[key].sprite.velocity.x * velocitySmoothness,
+					data.joueurs[key].vy * (1-velocitySmoothness) + players[key].sprite.velocity.y * velocitySmoothness
+				);
+
+			} else {
+				players[key] = joueur;
 			}
 		}
 	}
@@ -51,7 +89,7 @@ socket.on('joueurs',function(data){
 
 socket.on('nb_joueurs',function(data){console.log(data+' joueur(s) en ligne.')})
 
-var widthPlatform = 1080;
+var widthPlatform = ($(window).width()-50);
 var id=1;
 var espacePlatform = 130;
 var speed = 2;
@@ -80,9 +118,9 @@ function getBest(){
 };
 
 function updateCamera(){
-	camera.position.x = joueur.sprite.position.x*0.1+camera.position.x*0.9;
-	camera.position.y = joueur.sprite.position.y*0.1+camera.position.y*0.9;
-};
+	camera.position.x = joueur.sprite.position.x*0.1+camera.position.x*0.9
+	camera.position.y = joueur.sprite.position.y*0.1+camera.position.y*0.9
+}
 
 function setup(){
 	createCanvas($(window).width(), $(window).height());
@@ -90,33 +128,26 @@ function setup(){
 	//TODO GET ID via serveur puis emit pour pseudo position etc..
 	setInterval(function(){
 		socket.emit('maPosition',{
-			id: mon_id, 
-			x: joueur.sprite.position.x, 
-			y: joueur.sprite.position.y, 
-			vx: joueur.sprite.velocity.x, 
+			id: mon_id,
+			x: joueur.sprite.position.x,
+			y: joueur.sprite.position.y,
+			vx: joueur.sprite.velocity.x,
 			vy: joueur.sprite.velocity.y
 		});
 	}, 1000/30);
 	getBest();
 
 	joueur = new Joueur(mon_id,xpos,GROUND_Y,pseudo);
-	socket.emit('new_player',{
-		pseudo: pseudo,
-		x: joueur.sprite.position.x, 
-		y: joueur.sprite.position.y, 
-		vx: joueur.sprite.velocity.x, 
-		vy: joueur.sprite.velocity.y
-	});
-	sol = new Platform(1080,900,1080*3,50,"floor");
+	socket.emit('new_player',{pseudo: pseudo,x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
+	sol = new Platform(1080, 900, 1080*3, 50/*width/2,height,width*3,50*/,"floor");
 	
 	
 	parcoursPlatform = new ParcoursPlatform();
-	platform = new Platform(900, GROUND_Y-50, widthPlatform, 50,"platform");
-	platform2 = new Platform(900+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
+	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
+	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
 
 	parcoursPlatform.add(platform);
 	parcoursPlatform.add(platform2)
-
 
 	parcours = new Parcours();
 	obstacle = new Objet(width/4+3*width, GROUND_Y, 60, 50, color(0),"obs");
@@ -136,27 +167,24 @@ function setup(){
 	parcoursPiece.add(piece2);
 	parcoursPiece.add(piece3);
 	
-	joueur.setVelocity(7);
 	start = new Date();
+	camera.on();
 }
 
 function draw(){
 	
+	// Mise à jour des timers.
+
 	time = new Date();
 	scoreTimeB = time-start;
 	scoreTime = scoreTimeB.toString().substring(0, scoreTimeB.toString().length-3)+':'+scoreTimeB.toString().substring(scoreTimeB.toString().length-3,4);
-	background(200);
-	text(pseudo,joueur.getX()-joueur.getWidth()/2,joueur.getY()-30);
-	if(best_score==""){
-		text('Chargement du meilleur score ...',width/2,height/2+25);
-	}else{
-		text('Meilleur Score : '+best_score+' par : '+best_name,width/2,height/2+25);
-	}
-	
-	camera.on();
-	
-	drawSprites();
-	//console.log(platform2.position.x);
+
+	/*if (keyIsDown(E) && xpos < $(window).width() && joueur.getVisible() == true){
+		joueur.shoot();
+		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
+	}*/
+
+	// Touches de déplacement.
 
 	if (keyIsDown(LEFT_ARROW) && xpos > 0 && joueur.getVisible() == true){
 		joueur.move('-',speed);
@@ -164,33 +192,67 @@ function draw(){
 
 	if (keyIsDown(RIGHT_ARROW) && xpos < $(window).width() && joueur.getVisible() == true){
 		joueur.move('+',speed);
-		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
 	}
 
-	/*if (keyIsDown(E) && xpos < $(window).width() && joueur.getVisible() == true){
-		joueur.shoot();
-		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
-	}*/
+	if (keyIsDown(32) && joueur.getVelocity() == 0 /*&& joueur.sprite.position.y >= GROUND_Y*/){
+		joueur.decrementVelocity(jump);
+	}
 
+	// Mise à jour des accélérations.
+
+	// Mise à jour des vitesses.
+
+	for(var key in players){
+
+		// Gravité
+
+		players[key].incrementVelocity(2);
+	}
+
+	// Mise à jour des positions.
+
+	// Mise à jour des collisions.
+
+	for(var key in players){
+
+		// Sol.
+
+		if(players[key].collision(sol.getSprite())){
+			players[key].setVelocity(0);
+		}
+
+		// Plateformes
+
+		parcoursPlatform.collision(players[key].getSprite());
+		
+		// Frottements 
+
+		players[key].sprite.velocity.x *= 0.95
+	}
+
+	score = parcoursPiece.collision(score,joueur.getSprite());
+
+	// Mise à jour de la camera.
+
+	var deltaTemps = (new Date()-derniere_col)/25;
+	camera.zoom=1+normale(deltaTemps-3,1,0)
 	updateCamera();
 
-	parcoursPlatform.collision(joueur.getSprite());
-	score = parcoursPiece.collision(score,joueur.getSprite());
-	
-	if (joueur.collision(sol.getSprite())) {
-		joueur.setVelocity(0);
+	// Dessin des premières informations.
+
+	background(200);
+	text(pseudo,joueur.getX()-joueur.getWidth()/2,joueur.getY()-30);
+	if(best_score==""){
+		text('Chargement du meilleur score ...',width/2,height/2+25);
+	}else{
+		text('Meilleur Score : '+best_score+' par : '+best_name,width/2,height/2+25);
 	}
 
-	for(var key in others_players){
-		if(others_players.hasOwnProperty(key)){
-			if(mon_id!=key){
-				if(others_players[key].collision(sol.getSprite())){
-					others_players[key].setVelocity(0);
-					parcoursPlatform.collision(others_players[key].getSprite());
-				}
-			}
-		}
-	}
+	// Dessin des sprites.
+
+	drawSprites();
+
+	// Vérification de la victoire.
 
 	if(game){
 		game = parcours.collision(joueur.getSprite())
@@ -201,22 +263,11 @@ function draw(){
 			score=0;
 		}
 	}
-
-	var deltaTemps = (new Date()-derniere_col)/25;
-	camera.zoom=1+normale(deltaTemps-3,1,0)
-
-	joueur.incrementVelocity(2);
-	joueur.sprite.velocity.x *= 0.95
 }
 
 function keyPressed(){
 	//GET KEY CODE
 	//alert(keyCode);
-	
-	if (keyCode == 32 && joueur.getVelocity() == 2 /*&& joueur.sprite.position.y >= GROUND_Y*/){
-		joueur.decrementVelocity(jump);
-		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
-	}
 
 	if (keyCode == 82){
 		joueur.resetPos()
@@ -228,7 +279,6 @@ function keyPressed(){
 		game = true;
 		start = new Date();
 		getBest();
-		socket.emit('maPosition',{id: id, x: joueur.sprite.position.x, y: joueur.sprite.position.y});
 	}
 
 	if (keyCode == 69 && joueur.getVisible() == true){
