@@ -20,8 +20,15 @@ class Objet{
         this.sprite.shapeColor = couleur;
         this.init_x = x;
         this.init_y = y;
-        this.type = type;
-       
+        this.type = type;  
+    }
+
+    /**
+     * Cette méthode permet de définir la position
+     */
+    setPos(x,y){
+        this.sprite.position.x = x;
+        this.sprite.position.y = y;
     }
 
     /**

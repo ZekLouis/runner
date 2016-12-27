@@ -119,8 +119,8 @@ class Joueur{
      * Cette méthode permet au joueur de tirer
      */
     shoot(){
-        var obj = new Objet(joueur.getX()+joueur.getWidth()/2,joueur.getY(),10,10,color(0),"shoot");
-        var expl = new Objet(joueur.getX()+joueur.getWidth(),joueur.getY(),10,10,color(0),"explode");
+        var obj = new Objet(joueur.getX()+joueur.getWidth(),joueur.getY()-4,10,10,color(0),"shoot");
+        var expl = new Objet(joueur.getX()+joueur.getWidth(),joueur.getY()-4,10,10,color(0),"explode");
         setTimeout(function(){ expl.getSprite().remove()}, 50);
         setTimeout(function(){ obj.getSprite().remove()}, 5000);
         derniere_col = new Date();

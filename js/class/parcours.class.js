@@ -8,27 +8,53 @@ class Parcours{
      */
     constructor(){
         this.objets = [];
+        this.pieces = [];
+        this.platforms = [];
     }
 
     /**
      * Cette méthode permet d'ajouter un objet au parcours
      */
     add(objet){
-        this.objets.push(objet);
+        if(objet instanceof Piece)
+            this.pieces.push(objet);
+        else if(objet instanceof Platform)
+            this.platforms.push(objet);
+        else
+            this.objets.push(objet);
     }
 
     /**
      * Cette méthode permet de tester si le personnage est en collision avec un objet du parcours
      */
-    collision(personnage){
-        for(var i = 0; i<this.objets.length; i++){
-            if (personnage.collide(this.objets[i].sprite) && this.objets[i] instanceof Objet) {
-                personnage.visible = false;
-                alert('Perdu !');
-                return false;
+    collision(score,personnage){
+        for(var i = 0; i<this.pieces.length; i++){
+            if (personnage.getSprite().collide(this.pieces[i].sprite)) {
+                this.pieces[i].sprite.position.y = -5000;
+                //derniere_col = new Date();
+                return score+10;
             }
 	    }
-        return true;
+        if(game==true){
+            for(var i = 0; i<this.objets.length; i++){
+                if (personnage.getSprite().collide(this.objets[i].sprite) && this.objets[i] instanceof Objet) {
+                    personnage.getSprite().visible = false;
+                    alert('Perdu !');
+                    // Si je suis en collision je le dit au serveur, j'ignore si un autre joueur est en collision
+                    if(joueur.id==personnage.id){
+                        socket.emit('death');
+                    }
+                    game = false;
+                    return false;
+                }
+            }
+        }
+        for(var i = 0; i<this.platforms.length; i++){
+            if (personnage.getSprite().collide(this.platforms[i].sprite)) {
+                personnage.getSprite().velocity.y = 0
+            }
+	    }
+        return score;
     }
 
     /**

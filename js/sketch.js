@@ -6,24 +6,36 @@ var xpos = 400;
 var n_joueur = null;
 var socket = io('http://localhost:8080');
 var players = [];
-var busy = false;
 var mon_id = "";
 var lastUpdatePositionsTimestamp = new Date().getTime();
 
-
-/*socket.on('new_player', function(data){
-	console.log(data.pseudo+" s'est connecté.");
-	n_joueur = new Joueur(xpos,GROUND_Y);
-});*/
 socket.on('del_player', function(data){
 	console.log(data+" s'est deconnecté.");
 	players[data].sprite.remove();
 	delete(players[data]);
 });
 
-socket.on('id',function(data){
+/*socket.on('id',function(data){
 	mon_id = data;
 	joueur.setId(mon_id);
+});*/
+
+socket.on('wall',function(data){
+	wall = new Objet(-500+(time_wall-data.time)*data.speed, GROUND_Y, 100,width,color(0),"obs");
+	wall.getSprite().velocity.x = data.speed;
+	var time_wall_2 = data.time; 
+	parcours.add(wall);
+	//wall.setPos();
+});
+
+socket.on('reset',function(){
+	joueur.resetPos();
+	score = 0;
+	temps = 0;
+	parcours.reset();
+	game = true;
+	start = new Date();
+	getBest();
 });
 
 socket.on('joueurs',function(data){
@@ -90,7 +102,6 @@ socket.on('joueurs',function(data){
 socket.on('nb_joueurs',function(data){console.log(data+' joueur(s) en ligne.')})
 
 var widthPlatform = ($(window).width()-50);
-var id=1;
 var espacePlatform = 130;
 var speed = 2;
 var jump = 30;
@@ -138,34 +149,40 @@ function setup(){
 	getBest();
 
 	joueur = new Joueur(mon_id,xpos,GROUND_Y,pseudo);
-	socket.emit('new_player',{pseudo: pseudo,x: joueur.sprite.position.x, y: joueur.sprite.position.y, vx: joueur.sprite.velocity.x, vy: joueur.sprite.velocity.y});
+	socket.emit('register_player',{
+			pseudo: pseudo,
+			x: joueur.sprite.position.x, 
+			y: joueur.sprite.position.y, 
+			vx: joueur.sprite.velocity.x, 
+			vy: joueur.sprite.velocity.y
+		},
+		function(id){
+			mon_id = id;
+	});
+	parcours = new Parcours();
 	sol = new Platform(1080, 900, 1080*3, 50/*width/2,height,width*3,50*/,"floor");
 	
-	
-	parcoursPlatform = new ParcoursPlatform();
 	platform = new Platform(width/2, GROUND_Y-50, widthPlatform, 50,"platform");
 	platform2 = new Platform(width/2+widthPlatform+espacePlatform, GROUND_Y-50, widthPlatform, 50,"platform");
 
-	parcoursPlatform.add(platform);
-	parcoursPlatform.add(platform2)
+	parcours.add(sol);
+	parcours.add(platform);
+	parcours.add(platform2)
 
-	parcours = new Parcours();
 	obstacle = new Objet(width/4+3*width, GROUND_Y, 60, 50, color(0),"obs");
-	obstacle2 = new Objet(width/2+widthPlatform/2+espacePlatform/2, GROUND_Y, espacePlatform,50,color(0),"obs");
+	
 	obstacleRef = new Objet(4000, GROUND_Y, 60, 50,color(0),"obs");
 	
 	parcours.add(obstacle);
-	parcours.add(obstacle2);
 	parcours.add(obstacleRef);
 	
-	parcoursPiece = new ParcoursPiece();
 	piece = new Piece(xpos+100,GROUND_Y);
 	piece2 = new Piece(3*widthPlatform+espacePlatform,GROUND_Y-100);
 	piece3 = new Piece(3*widthPlatform+espacePlatform,GROUND_Y);
 	
-	parcoursPiece.add(piece);
-	parcoursPiece.add(piece2);
-	parcoursPiece.add(piece3);
+	parcours.add(piece);
+	parcours.add(piece2);
+	parcours.add(piece3);
 	
 	start = new Date();
 	camera.on();
@@ -174,7 +191,7 @@ function setup(){
 function draw(){
 	
 	// Mise à jour des timers.
-
+	time_wall = new Date().getTime();
 	time = new Date();
 	scoreTimeB = time-start;
 	scoreTime = scoreTimeB.toString().substring(0, scoreTimeB.toString().length-3)+':'+scoreTimeB.toString().substring(scoreTimeB.toString().length-3,4);
@@ -222,15 +239,18 @@ function draw(){
 		}
 
 		// Plateformes
+		// Test des collisions avec les autres joueurs
 
-		parcoursPlatform.collision(players[key].getSprite());
+		parcours.collision(score,players[key]);
 		
 		// Frottements 
 
 		players[key].sprite.velocity.x *= 0.95
 	}
 
-	score = parcoursPiece.collision(score,joueur.getSprite());
+	// Test des collisions avec son joueur
+
+	score = parcours.collision(score,joueur);
 
 	// Mise à jour de la camera.
 
@@ -255,7 +275,7 @@ function draw(){
 	// Vérification de la victoire.
 
 	if(game){
-		game = parcours.collision(joueur.getSprite())
+		
 		if(score>=SCORE_TO_WIN){
 			res = score;
 			alert('Temps : '+scoreTime);
@@ -269,17 +289,15 @@ function keyPressed(){
 	//GET KEY CODE
 	//alert(keyCode);
 
-	if (keyCode == 82){
+	/*if (keyCode == 82){
 		joueur.resetPos()
 		score = 0
 		temps = 0
 		parcours.reset();
-		parcoursPlatform.reset();
-		parcoursPiece.reset();
 		game = true;
 		start = new Date();
 		getBest();
-	}
+	}*/
 
 	if (keyCode == 69 && joueur.getVisible() == true){
 		joueur.shoot("right");
