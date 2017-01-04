@@ -46,6 +46,9 @@ class Objet{
         return this.sprite;
     }
     
+    /**
+     * Cette méthode permet de faire reculer le joueur lorsqu'il tire
+     */
     moveShoot(){
         this.sprite.velocity.x = 50;
     }

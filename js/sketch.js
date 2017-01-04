@@ -4,7 +4,7 @@
 var GROUND_Y = 800;//($(window).height()-50);
 var xpos = 400;
 var n_joueur = null;
-var socket = io('http://localhost:8080');
+var socket = io('http://louisgaume.ddns.net:8080');
 var players = [];
 var mon_id = "";
 var lastUpdatePositionsTimestamp = new Date().getTime();
